@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d84b1f">
+  <meta name="description" content="Una adaptación web de la baraja clásica Coches Rally.">
+  <title>Coches Rally — Juego de características</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="app-shell">
+    <header class="masthead">
+      <button class="brand" id="homeButton" type="button" aria-label="Volver al inicio">
+        <span class="brand-mark">CR</span>
+        <span><strong>Coches Rally</strong><small>Juego de características</small></span>
+      </button>
+      <button class="text-button" id="rulesButton" type="button">Cómo jugar</button>
+    </header>
+
+    <section class="start-screen" id="startScreen">
+      <div class="hero-copy">
+        <p class="eyebrow">Heraclio Fournier · 1984</p>
+        <h1>Treinta y dos coches.<br><em>Una sola baraja.</em></h1>
+        <p class="lede">Mide tu garaje contra la máquina. Elige la característica más fuerte, gana la mano y hazte con todas sus cartas.</p>
+        <div class="hero-actions">
+          <button class="primary-button" id="startButton" type="button"><span>Arrancar partida</span><span aria-hidden="true">→</span></button>
+          <span class="deck-detail"><b id="deckSize">—</b> cartas · 2 jugadores</span>
+        </div>
+        <p class="load-status" id="deckStatus" role="status" aria-live="polite">Cargando baraja…</p>
+      </div>
+      <div class="hero-deck" aria-hidden="true">
+        <div class="card-shadow card-shadow-one"></div>
+        <div class="card-shadow card-shadow-two"></div>
+        <img id="coverImage" alt="Portada de la baraja Coches Rally">
+        <span class="edition-stamp">Edición digital</span>
+      </div>
+      <p class="scan-note">Restaurado a partir de los escaneos originales</p>
+    </section>
+
+    <section class="game-screen" id="gameScreen" hidden>
+      <div class="scoreboard">
+        <div class="score score-player"><span>Tú</span><strong id="playerCount">16</strong><small>cartas</small></div>
+        <div class="round-status"><span id="turnPill">Tu turno</span><strong id="roundTitle">Elige una característica</strong><small id="roundSubtitle">La cifra más alta gana</small></div>
+        <div class="score score-rival"><span>Rival</span><strong id="cpuCount">16</strong><small>cartas</small></div>
+      </div>
+
+      <div class="table" id="gameTable">
+        <article class="player-zone">
+          <p class="zone-label">Tu carta</p>
+          <div class="playing-card" id="playerCard"></div>
+        </article>
+
+        <div class="versus" aria-hidden="true"><span>vs</span></div>
+
+        <article class="player-zone rival-zone">
+          <p class="zone-label">Carta rival</p>
+          <div class="playing-card card-back" id="cpuCard"></div>
+        </article>
+      </div>
+
+      <div class="action-bar">
+        <p id="actionHint" role="status" aria-live="polite">Selecciona una característica de tu carta</p>
+        <button class="primary-button compact" id="nextButton" type="button" hidden>Siguiente mano <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="rulesDialog" class="modal">
+    <button class="modal-close" id="closeRulesButton" type="button" aria-label="Cerrar">×</button>
+    <div class="rules-layout">
+      <div>
+        <p class="eyebrow">Reglamento</p>
+        <h2>Cómo se juega</h2>
+        <ol>
+          <li>Las 32 cartas se barajan y se reparten por igual.</li>
+          <li>Quien tiene el turno elige una característica de su primera carta.</li>
+          <li>Ambos descubren su valor. La cifra más alta gana la mano y todas las cartas en juego.</li>
+          <li>Quien gana vuelve a elegir. Si hay empate, el bote pasa a la mano siguiente.</li>
+          <li>La partida termina cuando alguien se queda sin cartas.</li>
+        </ol>
+        <p class="fine-print">Esta versión enfrenta a una persona contra la máquina. Los datos proceden de la baraja escaneada y se pueden corregir en el archivo JSON.</p>
+      </div>
+      <img id="rulesImage" alt="Reglamento original escaneado">
+    </div>
+  </dialog>
+
+  <dialog id="endDialog" class="modal end-modal">
+    <p class="eyebrow">Fin de la carrera</p>
+    <h2 id="endTitle">¡Has ganado!</h2>
+    <p id="endCopy"></p>
+    <button class="primary-button" id="restartButton" type="button">Jugar otra vez <span aria-hidden="true">↻</span></button>
+  </dialog>
+
+  <template id="cardTemplate">
+    <div class="card-frame">
+      <img class="card-image" alt="">
+      <div class="digital-stats"></div>
+    </div>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

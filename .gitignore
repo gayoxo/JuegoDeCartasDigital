@@ -1,0 +1,9 @@
+# >>> openspec-installer >>>
+# Ficheros locales de cada máquina generados por openspec-installer.
+.openspec-tool/
+.openspec-installer/
+# <<< openspec-installer <<<
+
+# Dependencias y artefactos locales de la distribución de escritorio.
+desktop/node_modules/
+desktop/release/

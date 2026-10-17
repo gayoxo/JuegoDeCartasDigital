@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "mini-space",
+  "name": "Naves Mini",
+  "subtitle": "Baraja de prueba",
+  "cover": "assets/mini/cover.jpg",
+  "back": "assets/mini/back.jpg",
+  "rulesImage": "assets/mini/rules.jpg",
+  "sourceNote": "Fixture de validación",
+  "stats": [
+    { "key": "speed", "label": "Velocidad", "unit": "km/s", "direction": "high" },
+    { "key": "mass", "label": "Masa", "unit": "t", "direction": "low" }
+  ],
+  "cards": [
+    { "id": "a", "name": "Aurora", "image": "assets/mini/a.jpg", "values": { "speed": 9, "mass": 4 } },
+    { "id": "b", "name": "Boreal", "image": "assets/mini/b.jpg", "values": { "speed": 7, "mass": 2 } }
+  ]
+}

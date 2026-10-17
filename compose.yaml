@@ -1,0 +1,13 @@
+services:
+  rally:
+    build:
+      context: .
+    image: baraja-rally:local
+    ports:
+      - "${RALLY_PORT:-8080}:8080"
+    read_only: true
+    tmpfs:
+      - /config:uid=1001,gid=1001,mode=0700
+      - /data:uid=1001,gid=1001,mode=0700
+      - /tmp:uid=1001,gid=1001,mode=1777
+    restart: unless-stopped
