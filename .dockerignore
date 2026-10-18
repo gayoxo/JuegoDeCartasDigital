@@ -2,4 +2,9 @@
 !Dockerfile
 !Caddyfile
 !dist/**
+!desktop/package.json
+!desktop/package-lock.json
+!desktop/main.cjs
+!desktop/lib/**
+!desktop/test/**
 

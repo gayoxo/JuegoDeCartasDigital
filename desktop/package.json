@@ -1,0 +1,46 @@
+{
+  "name": "baraja-rally-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Contenedor Electron para el juego Coches Rally",
+  "main": "main.cjs",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "test:smoke": "node test/smoke.cjs",
+    "package:win": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "es.gayox.barajarally",
+    "productName": "Baraja Rally",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "lib/**/*.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist",
+        "to": "dist",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "Baraja-Rally-${version}-portable-${arch}.${ext}"
+    }
+  }
+}
