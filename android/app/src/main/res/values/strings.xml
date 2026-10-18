@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Baraja Rally</string>
+    <string name="title_activity_main">Baraja Rally</string>
+    <string name="package_name">es.gayox.barajarally</string>
+    <string name="custom_url_scheme">es.gayox.barajarally</string>
+</resources>

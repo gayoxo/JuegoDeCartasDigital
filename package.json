@@ -2,7 +2,24 @@
   "name": "coches-rally-web",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22 <23",
+    "npm": ">=10"
+  },
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "android:assets": "capacitor-assets generate --android --iconBackgroundColor '#ef3b16' --iconBackgroundColorDark '#b42312' --splashBackgroundColor '#ef3b16' --splashBackgroundColorDark '#b42312'",
+    "android:sync": "cap sync android",
+    "android:verify-assets": "node tools/verify-android-assets.mjs",
+    "android:build:debug": "npm run android:sync && npm run android:verify-assets && node tools/run-android-gradle.mjs assembleDebug",
+    "android:build:release": "npm run android:sync && npm run android:verify-assets && node tools/run-android-gradle.mjs assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3"
   }
 }

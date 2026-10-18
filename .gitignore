@@ -5,5 +5,11 @@
 # <<< openspec-installer <<<
 
 # Dependencias y artefactos locales de la distribución de escritorio.
+node_modules/
+.android-sdk*/
+.jdk*/
+*.jks
+*.keystore
+keystore.properties
 desktop/node_modules/
 desktop/release/

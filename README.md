@@ -6,6 +6,7 @@ Adaptación web del juego clásico de cartas de características, construida con
 
 Elige las herramientas según cómo quieras ejecutar el juego:
 
+- **Android:** Node.js 22, npm, JDK 21 y Android Studio/SDK con Platform 36 y Build-Tools 36.0.0.
 - **Web local:** JDK 18 o posterior para usar el servidor incluido, o cualquier servidor HTTP estático equivalente.
 - **Pruebas:** Node.js 22, que ya incluye npm.
 - **Docker:** Docker Desktop con Docker Compose; no necesita Node.js ni npm instalados en el equipo.
@@ -25,6 +26,23 @@ El primer comando debe mostrar una versión `v22.x` y el segundo una versión de
 ## Inicio rápido
 
 Salvo que se indique lo contrario, ejecuta los comandos desde la raíz del repositorio.
+
+### Android
+
+Instala las dependencias fijadas, sincroniza los recursos y genera el APK de depuración:
+
+```powershell
+npm ci
+npm run android:build:debug
+```
+
+El APK instalable queda en `android/app/build/outputs/apk/debug/app-debug.apk`. Puedes instalarlo con:
+
+```powershell
+adb install -r ".\android\app\build\outputs\apk\debug\app-debug.apk"
+```
+
+La guía [Distribución Android](docs/android.md) explica el SDK, la sincronización, los iconos, la firma release, la prueba sin conexión y el diagnóstico.
 
 ### Web local
 
@@ -123,6 +141,7 @@ El ejecutable se genera en `desktop/release/Baraja-Rally-1.0.0-portable-x64.exe`
 
 ## Documentación detallada
 
+- [Distribución Android](docs/android.md): entorno, APK debug/release, firma, instalación, prueba offline y diagnóstico.
 - [Distribución Docker](docs/docker.md): construcción directa, Compose, puerto personalizado, salud, diagnóstico y limpieza.
 - [Distribución de escritorio](docs/desktop.md): desarrollo Electron, smoke test offline, empaquetado, seguridad y resolución de fallos.
 - [Verificación de distribuciones](docs/verification.md): versiones, comandos y resultados de la última batería completa registrada.
