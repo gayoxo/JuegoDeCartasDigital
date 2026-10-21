@@ -1,0 +1,9 @@
+[Vulkan Loader] WARNING | LAYER: windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_overlay" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_fossilize" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
+[Vulkan Loader] WARNING | LAYER: windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_overlay" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_fossilize" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
+[Vulkan Loader] WARNING | LAYER: windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_overlay" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
+[Vulkan Loader] WARNING | LAYER: Layer "VK_LAYER_VALVE_steam_fossilize" forced disabled because name matches filter of env var 'VK_LOADER_LAYERS_DISABLE'.
