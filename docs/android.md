@@ -98,6 +98,24 @@ Una actualización release solo puede instalarse sobre otra firmada con la misma
 4. Inicia una partida, selecciona características y juega hasta el resultado final.
 5. Verifica que no aparece ningún error de carga de imágenes o del manifiesto.
 
+## Matriz de comprobación móvil
+
+Ejecuta esta matriz en un emulador o dispositivo Android actual después de instalar el APK. La partida debe conservarse en todos los cambios de orientación y ciclo de vida.
+
+| Caso | Acción | Resultado esperado |
+| --- | --- | --- |
+| Táctil | Iniciar, abrir/cerrar reglas, elegir característica y avanzar de mano | Todos los controles responden con una sola pulsación y tienen un objetivo mínimo de 44 px |
+| Vertical | Recorrer inicio, elección, resultado y final en orientación vertical | La acción principal y los contadores permanecen visibles; no hay desplazamiento horizontal |
+| Horizontal | Rotar durante una mano elegida y durante el resultado | Se conserva la mano y el ancho del documento no supera el viewport |
+| Atrás con reglas | Abrir reglas y pulsar Atrás | Solo se cierran las reglas |
+| Atrás en partida | Pulsar Atrás durante una partida | Aparece la confirmación; otra pulsación la cierra sin perder la partida |
+| Atrás en inicio | Pulsar Atrás desde la portada | Android cierra la aplicación |
+| Segundo plano | Enviar la app al fondo y recuperarla | Reaparecen iniciativa, pilas, bote y carta revelada |
+| Recreación | Forzar la recreación de la actividad y abrir la app | Se restaura la misma partida antes de habilitar acciones |
+| Estado inválido | Iniciar con una instantánea corrupta o incompatible | Se informa de la recuperación fallida y se permite empezar una partida nueva |
+
+La validación automatizada complementaria se ejecuta desde la raíz con `npm test` y `python tests/e2e.py`; esta última necesita la web disponible en `http://host.docker.internal:4173/` y Playwright con Chromium.
+
 ## Diagnóstico
 
 - **`node` o `npm` no existe**: instala Node.js 22 y abre una terminal nueva.

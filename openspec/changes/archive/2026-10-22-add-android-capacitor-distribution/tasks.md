@@ -23,7 +23,7 @@
 
 - [x] 4.1 Construir el APK debug desde una instalación limpia y verificar que el archivo se genera en la ruta documentada y Android acepta su instalación.
 - [x] 4.2 Ejecutar el APK sin conectividad en un emulador o dispositivo Android 16 y verificar portada, carga de las 32 cartas, inicio y finalización de una partida.
-- [ ] 4.3 Construir una variante release con una clave de prueba externa, verificar su firma e instalación y confirmar que la clave y las credenciales permanecen fuera del repositorio.
+- [x] 4.3 Construir una variante release con una clave de prueba externa, verificar su firma e instalación y confirmar que la clave y las credenciales permanecen fuera del repositorio.
 
 ## Workflow follow-up
 

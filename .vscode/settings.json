@@ -1,6 +1,15 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
   "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.x.x-hotspot",
-  "java.import.gradle.wrapper.enabled": true
-
+  "java.import.gradle.wrapper.enabled": true,
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.project.importOnFirstTimeStartup": "disabled",
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "gradle.autoDetect": "off",
+  "java.import.exclusions": [
+    "**/node_modules/**",
+    "**/android/**"
+  ],
+   "gradle.nestedProjects": false
 }
+

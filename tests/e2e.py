@@ -86,7 +86,8 @@ def test_controlled_gameplay_and_rules(browser):
 
 
 def test_mobile_layout_and_reduced_motion(browser):
-    page = browser.new_page(viewport={"width": 320, "height": 780}, reduced_motion="reduce")
+    context = browser.new_context(viewport={"width": 320, "height": 780}, reduced_motion="reduce", has_touch=True, is_mobile=True)
+    page = context.new_page()
     page.goto(BASE_URL)
     expect(page.locator("#startButton")).to_be_enabled()
     layout = page.evaluate("""() => ({
@@ -100,7 +101,37 @@ def test_mobile_layout_and_reduced_motion(browser):
     assert layout["scrollWidth"] <= layout["clientWidth"], layout
     transition = page.locator("#startButton").evaluate("el => getComputedStyle(el).transitionDuration")
     assert transition in ("0s", "0.00001s", "1e-05s"), transition
-    page.close()
+    for selector in ("#startButton", "#rulesButton"):
+        box = page.locator(selector).bounding_box()
+        assert box["height"] >= 44, (selector, box)
+    context.close()
+
+
+def test_orientation_keeps_current_action_visible(browser):
+    context = browser.new_context(viewport={"width": 360, "height": 800}, has_touch=True, is_mobile=True)
+    page = context.new_page()
+    page.add_init_script("Math.random = () => 0")
+    page.route("**/data/decks/rally-cars.json", lambda route: route.fulfill(status=200, content_type="application/json", body=json.dumps(controlled_deck)))
+    page.goto(BASE_URL)
+    page.locator("#startButton").tap()
+
+    def assert_layout(selector):
+        layout = page.evaluate("""selector => ({
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth,
+            action: (() => { const r = document.querySelector(selector).getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; })()
+        })""", selector)
+        assert layout["scrollWidth"] <= layout["clientWidth"], layout
+        assert layout["action"]["left"] >= -1 and layout["action"]["right"] <= layout["clientWidth"] + 1, layout
+
+    assert_layout('#playerCard .stat-button:not([disabled])')
+    page.set_viewport_size({"width": 800, "height": 360})
+    assert_layout('#playerCard .stat-button:not([disabled])')
+    page.locator('#playerCard .stat-button:not([disabled])').first.tap()
+    assert_layout("#nextButton")
+    page.set_viewport_size({"width": 360, "height": 800})
+    assert_layout("#nextButton")
+    context.close()
 
 
 def test_keyboard_finish_and_restart(browser):
@@ -124,6 +155,26 @@ def test_keyboard_finish_and_restart(browser):
     page.close()
 
 
+def test_game_restores_and_discards_invalid_snapshot(browser):
+    context = browser.new_context(viewport={"width": 390, "height": 844}, has_touch=True, is_mobile=True)
+    page = context.new_page()
+    page.add_init_script("Math.random = () => 0")
+    page.route("**/data/decks/rally-cars.json", lambda route: route.fulfill(status=200, content_type="application/json", body=json.dumps(controlled_deck)))
+    page.goto(BASE_URL)
+    page.locator("#startButton").tap()
+    page.locator('#playerCard [data-stat="power"]').tap()
+    before = (page.locator("#playerCount").inner_text(), page.locator("#cpuCount").inner_text(), page.locator("#turnPill").inner_text())
+    page.reload()
+    expect(page.locator("#gameScreen")).to_be_visible()
+    assert before == (page.locator("#playerCount").inner_text(), page.locator("#cpuCount").inner_text(), page.locator("#turnPill").inner_text())
+    page.add_init_script("localStorage.setItem('baraja-rally.game.v1', '{broken')")
+    page.reload()
+    expect(page.locator("#startScreen")).to_be_visible()
+    expect(page.locator("#deckStatus")).to_contain_text("No se pudo recuperar")
+    expect(page.locator("#startButton")).to_be_enabled()
+    context.close()
+
+
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch()
     try:
@@ -131,7 +182,9 @@ with sync_playwright() as playwright:
         test_loading_error(browser)
         test_controlled_gameplay_and_rules(browser)
         test_mobile_layout_and_reduced_motion(browser)
+        test_orientation_keeps_current_action_visible(browser)
         test_keyboard_finish_and_restart(browser)
-        print("E2E: 5 scenarios passed")
+        test_game_restores_and_discards_invalid_snapshot(browser)
+        print("E2E: 7 scenarios passed")
     finally:
         browser.close()

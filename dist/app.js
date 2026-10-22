@@ -1,5 +1,6 @@
 import { loadDeck } from "./modules/deck.js";
 import { advanceRound, chooseCpuStat, createGame, PHASES, resolveRound, restartGame, startGame, statRanges } from "./modules/game-engine.js";
+import { clearSnapshot, createListenerRegistration, decideBackAction, loadSnapshot, saveSnapshot } from "./modules/mobile-lifecycle.js";
 
 const deckUrl = "data/decks/rally-cars.json";
 let deck = null;
@@ -14,8 +15,14 @@ const els = {
   coverImage: $("coverImage"), deckSize: $("deckSize"), deckStatus: $("deckStatus"), playerCard: $("playerCard"), cpuCard: $("cpuCard"),
   playerCount: $("playerCount"), cpuCount: $("cpuCount"), turnPill: $("turnPill"), roundTitle: $("roundTitle"),
   roundSubtitle: $("roundSubtitle"), actionHint: $("actionHint"), nextButton: $("nextButton"), endDialog: $("endDialog"),
-  endTitle: $("endTitle"), endCopy: $("endCopy"), restartButton: $("restartButton"), cardTemplate: $("cardTemplate")
+  endTitle: $("endTitle"), endCopy: $("endCopy"), restartButton: $("restartButton"), cardTemplate: $("cardTemplate"),
+  exitDialog: $("exitDialog"), cancelExitButton: $("cancelExitButton"), confirmExitButton: $("confirmExitButton")
 };
+
+const getNativeApp = () => globalThis.Capacitor?.Plugins?.App;
+let backRegistration = null;
+let stateRegistration = null;
+const persist = () => { if (game) saveSnapshot(localStorage, game); };
 
 const format = (value) => new Intl.NumberFormat("es-ES").format(value);
 const statByKey = (key) => deck.stats.find((stat) => stat.key === key);
@@ -114,6 +121,7 @@ function playStat(statKey) {
   if (game?.phase !== PHASES.CHOOSING) return;
   game = resolveRound(game, statKey);
   renderResolved();
+  persist();
 }
 
 function showEnd() {
@@ -132,6 +140,7 @@ function nextRound() {
   if (game.phase === PHASES.FINISHED) return showEnd();
   game = advanceRound(game);
   game.phase === PHASES.FINISHED ? showEnd() : renderChoosing();
+  persist();
 }
 
 function beginGame(restart = false) {
@@ -140,6 +149,7 @@ function beginGame(restart = false) {
   els.gameScreen.hidden = false;
   if (els.endDialog.open) els.endDialog.close();
   renderChoosing();
+  persist();
 }
 
 function goHome() {
@@ -148,6 +158,43 @@ function goHome() {
   els.gameScreen.hidden = true;
   els.startScreen.hidden = false;
   if (els.endDialog.open) els.endDialog.close();
+  if (els.exitDialog.open) els.exitDialog.close();
+  clearSnapshot(localStorage);
+}
+
+function restoreGame(restored) {
+  game = restored;
+  els.startScreen.hidden = true;
+  els.gameScreen.hidden = false;
+  if (game.phase === PHASES.CHOOSING) renderChoosing();
+  else renderResolved();
+}
+
+function handleBack() {
+  const action = decideBackAction({
+    rulesOpen: els.rulesDialog.open,
+    exitConfirmationOpen: els.exitDialog.open,
+    endOpen: els.endDialog.open,
+    gameActive: !els.gameScreen.hidden
+  });
+  if (action === "close-rules") return els.rulesDialog.close();
+  if (action === "close-confirmation") return els.exitDialog.close();
+  if (action === "close-end") return els.endDialog.close();
+  if (action === "confirm-exit") return els.exitDialog.showModal();
+  getNativeApp()?.exitApp();
+}
+
+async function attachNativeLifecycle() {
+  const nativeApp = getNativeApp();
+  if (!nativeApp) return;
+  backRegistration ??= createListenerRegistration((callback) => nativeApp.addListener("backButton", callback));
+  stateRegistration ??= createListenerRegistration((callback) => nativeApp.addListener("appStateChange", callback));
+  await backRegistration.attach(handleBack);
+  await stateRegistration.attach(({ isActive }) => { if (!isActive) persist(); });
+}
+
+async function detachNativeLifecycle() {
+  await Promise.all([backRegistration?.detach(), stateRegistration?.detach()]);
 }
 
 async function initialize() {
@@ -160,8 +207,11 @@ async function initialize() {
     els.coverImage.alt = `Portada de la baraja ${deck.name}`;
     els.rulesImage.src = deck.rulesImage;
     els.deckSize.textContent = deck.cards.length;
-    els.deckStatus.textContent = `${deck.name} preparada.`;
-    els.startButton.disabled = false;
+    const restored = loadSnapshot(localStorage, deck);
+    els.deckStatus.textContent = restored.discarded ? "No se pudo recuperar la partida anterior. Puedes empezar una nueva." : `${deck.name} preparada.`;
+    if (restored.game) restoreGame(restored.game);
+    else els.startButton.disabled = false;
+    await attachNativeLifecycle();
   } catch (error) {
     els.deckStatus.textContent = `No se pudo cargar la baraja: ${error.message}`;
     els.startButton.firstElementChild.textContent = "Baraja no disponible";
@@ -175,6 +225,10 @@ els.nextButton.addEventListener("click", nextRound);
 els.homeButton.addEventListener("click", goHome);
 els.rulesButton.addEventListener("click", () => els.rulesDialog.showModal());
 els.closeRulesButton.addEventListener("click", () => els.rulesDialog.close());
+els.cancelExitButton.addEventListener("click", () => els.exitDialog.close());
+els.confirmExitButton.addEventListener("click", goHome);
 els.rulesDialog.addEventListener("click", (event) => { if (event.target === els.rulesDialog) els.rulesDialog.close(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") persist(); });
+window.addEventListener("pagehide", () => { persist(); detachNativeLifecycle(); });
 
 initialize();

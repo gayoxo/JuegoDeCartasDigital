@@ -2,6 +2,8 @@
 
 Adaptación web del juego clásico de cartas de características, construida con los escaneos de la baraja incluidos en la raíz del proyecto.
 
+El proyecto mantiene simultáneamente cuatro formas de ejecución: web local, contenedor Docker, aplicación de escritorio para Windows y aplicación Android. Todas reutilizan `dist/` como fuente canónica del juego, por lo que una modificación de cartas, interfaz o lógica se incorpora a cada distribución al volver a construirla.
+
 ## Requisitos previos
 
 Elige las herramientas según cómo quieras ejecutar el juego:
@@ -138,6 +140,26 @@ cd ..
 ```
 
 El ejecutable se genera en `desktop/release/Baraja-Rally-1.0.0-portable-x64.exe`. La carpeta `release/` es local y está ignorada por Git.
+
+## Preparar una release multiplataforma
+
+Antes de publicar una revisión, valida la fuente compartida y reconstruye cada formato desde ella:
+
+```powershell
+npm ci
+npm test
+./tests/docker-integration.ps1
+
+cd desktop
+npm ci
+npm test
+npm run package:win
+cd ..
+
+npm run android:build:release
+```
+
+La construcción Android release requiere las cuatro variables externas de firma descritas en [Distribución Android](docs/android.md). El resultado web permanece en `dist/`, Docker se construye desde el `Dockerfile`, el portable queda bajo `desktop/release/` y el APK queda bajo `android/app/build/outputs/apk/release/`. Ningún artefacto generado sustituye al código fuente versionado.
 
 ## Documentación detallada
 
